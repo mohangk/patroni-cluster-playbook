@@ -1,0 +1,5 @@
+postgres_users_no_log: false
+
+# Set the data dir to the data disk 
+postgresql_version: "12"
+postgresql_data_dir: "/mnt/disks/pgdata/data"

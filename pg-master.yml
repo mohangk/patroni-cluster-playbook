@@ -1,0 +1,22 @@
+- hosts: databases
+  become: yes
+
+  vars_files:
+    - vars/main.yml
+
+  pre_tasks:
+    - name: Add pg12 repo key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add pg12 repository
+      apt_repository: 
+        repo: deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main
+        state: present
+        update_cache: true
+
+
+  roles:
+    - postgresql
+
