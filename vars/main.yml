@@ -1,5 +1,15 @@
+# its ok for Ansible to output info to screen
 postgres_users_no_log: false
 
-# Set the data dir to the data disk 
+# Use pg12
 postgresql_version: "12"
+# Set the data dir to the data disk 
 postgresql_data_dir: "/mnt/disks/pgdata/data"
+
+# Patroni will manage postgres
+postgresql_service_state: stopped
+postgresql_service_enabled: false
+
+postgresql_users:
+  - name: postgres
+    password: password
