@@ -4,7 +4,7 @@ postgres_users_no_log: false
 # Use pg12
 postgresql_version: "12"
 
-# Set the data dir to the data disk 
+# TODO: Set the data dir to the data disk 
 postgresql_data_dir: "/mnt/disks/pgdata/data"
 
 # we need postgresql running to configure the user
@@ -12,10 +12,13 @@ postgresql_service_state: started
 # Patroni will manage postgres
 postgresql_service_enabled: no 
 
+# TODO: set proper password
 postgresql_users:
   - name: postgres
     password: password
 
+
+# TODO: change last entry to reflect your local database
 postgresql_hba_entries:
     - { type: local, database: all, user: postgres, auth_method: peer }
     - { type: local, database: all, user: all, auth_method: peer }

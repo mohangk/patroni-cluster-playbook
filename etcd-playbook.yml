@@ -1,0 +1,7 @@
+- hosts: etcd
+
+  tasks:
+    - include_role:
+        name: andrewrothstein.etcd-cluster
+      vars:
+        etcd_secure: False
