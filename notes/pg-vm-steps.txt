@@ -1,0 +1,29 @@
+gcloud compute  instances create pg12-instance --no-address --zone=us-central1-a --machine-type=n2-standard-4 --image-family=debian-10 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=pg12-instance --create-disk=mode=rw,size=100,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=pgdata,device-name=pgdata --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+
+Ssh into the instance
+
+1. Format to ext4
+
+sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-pgdata
+
+//optimisation for later
+#2. Set 8-mb readahead 
+#sudo blockdev --setra 16384 /dev/disk/by-id/google-pgdata
+
+3. Mount partition
+sudo mkdir -p /mnt/disks/pgdata
+sudo mount -o discard,defaults /dev/disk/by-id/google-pgdata /mnt/disks/pgdata
+
+4. Set permissions
+sudo chmod a+w /mnt/disks/pgdata
+
+5. Update /etc/fstab
+echo UUID=`sudo blkid -s UUID -o value /dev/disk/by-id/google-pgdata` /mnt/disks/pgdata ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+
+6. Install python for ansible
+
+6. Create an image
+- create a snapshot
+- make image out of snapshot
+
+

@@ -1,0 +1,61 @@
+1. Ansible to install pg12 on Deb10
+  - Ensure using pg12
+  - Ensure using the right pgdata dir
+
+2. Pg config
+  - pg_hba.conf settings
+    - allow communication on local lan
+  - postgresql.conf setting
+    - listen_address
+    - max_connections
+   - postgres user can cannot via password
+
+3. Make pg12-baseimage (done)
+
+4. Read patroni setup
+   - Setup etcd instances
+   - get patroni installed on the VMs
+
+5. Disable the setting up of clusters during the pg playbook
+
+1. Get ansible to use dynamic inventory
+2. While creating the pg-instance, disable default createcluster
+        path: /etc/postgresql-common/createcluster.conf
+        replace: create_main_cluster = false      
+        regexp: ^#?create_main_cluster.*$         
+
+
+2. Determine what config options need to be set for postgres
+  - logging
+  - os optimizations
+  - network optimizations
+  - pd-ssh / fs optimizations 
+
+3. Logging 
+  - get patroni, etcd and postgresql logs streaming to cloudlogging
+  - Using stackdriver logging for logs
+
+4. Monitoring
+   - 3rd party tool?
+   - what should be monitored - rep lag, disk, io
+
+5. backups 
+  - pgbackrest, wall-g
+
+6. pgbouncer
+
+7. security
+  - ssl connections
+  - user lockdown
+
+
+Operational modes:
+1. Upgrading disk size
+2. Updating os disk (same major version)
+3. Updating new major version
+
+Sidebar: 
+
+1. Make PR for role changes
+2. try to rebase the playbook using ansible-galaxy
+3. 
