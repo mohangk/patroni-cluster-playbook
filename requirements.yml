@@ -1,1 +1,3 @@
-- src: andrewrothstein.etcd-cluster
+---
+roles:
+  - name: andrewrothstein.etcd-cluster
