@@ -16,10 +16,10 @@
         state: present
         update_cache: true
 
-    - name: Create a symlink so the PG_CLUSTER_CONF_ROOT is on the data disk
+    - name: Create a symlink so the PG_DATA is on the data disk
       file:
         src: /mnt/disks/pgdata #move this to vars
-        dest: /etc/postgresql
+        dest: /var/lib/postgresql
         state: link
 
   roles:
