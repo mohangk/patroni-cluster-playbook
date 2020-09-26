@@ -1,5 +1,3 @@
-gcloud compute  instances create pg12-instance --no-address --zone=us-central1-a --machine-type=n2-standard-4 --image-family=debian-10 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=pg12-instance --create-disk=mode=rw,size=100,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=pgdata,device-name=pgdata --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
-
 Ssh into the instance
 
 1. Format to ext4
