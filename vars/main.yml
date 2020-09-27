@@ -18,7 +18,7 @@ postgresql_users:
     password: password
 
 
-# TODO: change last entry to reflect your local database
+# TODO: change last entry to reflect your database subnet database
 postgresql_hba_entries:
     - { type: local, database: all, user: postgres, auth_method: peer }
     - { type: local, database: all, user: all, auth_method: peer }

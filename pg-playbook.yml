@@ -18,7 +18,7 @@
 
     - name: Create a symlink so the PG_DATA is on the data disk
       file:
-        src: /mnt/disks/pgdata #move this to vars
+        src: {{ postgresql_global_config_options.data_directory }}
         dest: /var/lib/postgresql
         state: link
 
