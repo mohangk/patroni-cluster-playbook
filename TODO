@@ -1,0 +1,20 @@
+postgresql role
+
+1. Allow for the the data_dir to be overidden (this has been done in my role)
+2. Why do we have the data dir defined in 2 places ?
+  postgresql_data_dir: "/mnt/disks/pgdata/12/main"
+  postgresql_global_config_options:
+
+pg-playbook
+
+1. Ensure that the postgres service is disabled on bootup
+2. Move bootstrap.sh steps into the pg12-playbook
+3. Add the cleanup steps before image creation to the pg-playbook
+4. Create image as part of the pg-playbook
+5. Maybe we dont need the data dir when creating the image
+
+streaming-replication setup
+
+
+
+

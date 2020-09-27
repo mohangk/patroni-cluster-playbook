@@ -16,12 +16,11 @@
         state: present
         update_cache: true
 
-    - name: Create a symlink so the PG_DATA is on the data disk
+    - name: Create a symlink from /var/lib/postgresql to data_disk mountpoint
       file:
-        src: {{ postgresql_global_config_options.data_directory }}
+        src: "{{ data_disk_mountpoint }}"
         dest: /var/lib/postgresql
         state: link
 
   roles:
     - postgresql
-

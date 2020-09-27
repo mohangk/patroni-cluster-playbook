@@ -14,4 +14,14 @@ else
 
         # Add fstab entry
         echo UUID=`sudo blkid -s UUID -o value $DISK_ID` $MNT_DIR ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+	
+	# Initialize dbdir
+        mkdir -p /var/lib/postgresql/12/main
+        chown -R postgres:postgres /var/lib/postgresql/
+        sudo -u postgres /usr/lib/postgresql/12/bin/initdb -D /var/lib/postgresql/12/main
+        
+        #rm the unrequired confs that are created with the initdb
+        #we will use the existing config in /etc/postgresql/12/main
+        sudo rm /var/lib/postgresql/12/main/*.conf
+	
 fi

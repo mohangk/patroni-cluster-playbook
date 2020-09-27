@@ -4,8 +4,6 @@ postgres_users_no_log: false
 # Use pg12
 postgresql_version: "12"
 
-# TODO: Set the data dir to the data disk 
-postgresql_data_dir: "/mnt/disks/pgdata/data"
 
 # we need postgresql running to configure the user
 postgresql_service_state: started
@@ -25,10 +23,14 @@ postgresql_hba_entries:
     - { type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5 }
     - { type: host, database: all, user: all, address: '10.128.0.0/20', auth_method: md5 }
 
+# TODO: Set the data dir to the data disk 
+postgresql_data_dir: "/mnt/disks/pgdata/12/main"
 postgresql_global_config_options:
   - option: listen_addresses
     value: '*'
   - option: max_connections
     value: 200
   - option: data_directory
-    value: '/mnt/disks/pgdata/data'
+    value: '/mnt/disks/pgdata/12/main'
+
+data_disk_mountpoint: '/mnt/disks/pgdata'
