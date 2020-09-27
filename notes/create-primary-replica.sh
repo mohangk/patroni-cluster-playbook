@@ -1,11 +1,11 @@
 gcloud compute  instances create pg-primary \
 	--no-address \
-	--zone=us-central1-a \ 
+	--zone=us-central1-a \
 	--machine-type=n2-standard-4 \
-	--image=pg12-202009251519 \
+	--image=pg12-202009270255 \
 	--boot-disk-size=10GB \
 	--boot-disk-type=pd-standard \
-	--boot-disk-device-name=pg12-osdisk \ 
+	--boot-disk-device-name=pg12-osdisk \
 	--no-boot-disk-auto-delete \
 	--create-disk=auto-delete=false,mode=rw,size=50,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=pg-primary-data,device-name=data \
 	--tags=pg12,primary \
