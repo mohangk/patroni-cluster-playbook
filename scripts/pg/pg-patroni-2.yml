@@ -1,9 +1,9 @@
 scope: pg-patroni
-name: pg-patroni-1
+name: pg-patroni-2
 
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: 10.128.0.26:8008
+  connect_address: 10.128.0.28:8008
 
 etcd:
   host: 10.128.0.25:80
@@ -34,7 +34,7 @@ bootstrap:
     - host replication replicator 10.128.0.0/24 md5 
     - host all all 0.0.0.0/0 md5
   users:
-    admin:
+    postgres:
       password: password
       options:
         - createrole
@@ -42,7 +42,7 @@ bootstrap:
 
 postgresql:
   listen: 0.0.0.0
-  connect_address: 10.128.0.26:5432
+  connect_address: 10.128.0.28:5432
   data_dir: /mnt/disks/pgdata/12/main
   config_dir: /etc/postgresql/12/main
   bin_dir: /usr/lib/postgresql/12/bin
@@ -56,7 +56,6 @@ postgresql:
       password: password
   parameters:
     unix_socket_directories: '/tmp'
-    stats_temp_directory: '/var/run/postgresql/12-main.pg_stat_tmp'
 tags:
   nofailover: false
   noloadbalance: false
