@@ -1,9 +1,14 @@
 [databases]
-10.128.0.20
+# Add IP for the following instances
+# pg12-img
 
 [etcd]
-10.128.0.7
+# Add IP for the following instances
+#  etcd1
+#  etcd2
 
 [etcd-master]
-10.128.0.7
+# Add IP for the following instances
+#  etcd1
+#  etcd2
 
