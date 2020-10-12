@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PG_IMAGE=pg12-202009270822
+PG_IMAGE=pg13-202010121013
 ZONE=${2:-us-central1-a}
 NAME=${1:-pg-primary}
 gcloud compute  instances create $NAME \
