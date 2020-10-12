@@ -8,10 +8,11 @@ Scripts, Ansible playbooks and steps to setup a HA PG on Google Cloud
 
 2. Start a Debian instance to serve as a bastion that allows you to directly ssh to VMs in your VPC (TODO - Look into the possibility of using Cloud Shell. Off the bat doesn't work because any ssh between CloudShell and VM still needs to go through IAP tunneling)
 
-3. Install Ansible 
+3. Install Ansible, git on the bastion 
 
 ```bash
-sudo apt-get install pip3-python
+sudo apt-get update
+sudo apt-get install pip3-python git
 pip3 install ansible
 ```
 
@@ -50,7 +51,7 @@ Note: For the etcd cluster these steps currently create VMs, install and configu
 1. Create 2 etcd instances (TODO: make it 3) - etcd1, etcd2
 `./scripts/etcd/create-etcd-instances.sh`
 
-2. Update inventory with the right IPs of those instnaces
+2. Update `inventory` file with the right IPs of those instances (internal FQDNs should work as well)
 
 3. Configure the instances using Ansible playbook
 
