@@ -1,0 +1,21 @@
+[Unit]
+Description=Runners to orchestrate a high-availability PostgreSQL
+After=syslog.target network.target
+
+[Service]
+Environment="PATRONI_SCOPE=$CLUSTER_NAME"
+Environment="PATRONI_NAME=$HOSTNAME"
+Environment="PATRONI_ETCD_HOST=$ETCD_ILB_IP:80"
+Environment="PATRONI_RESTAPI_CONNECT_ADDRESS=$HOST_IP:8008"
+Environment="PATRONI_POSTGRESQL_CONNECT_ADDRESS=$HOST_IP:5432"
+Type=simple
+User=postgres
+Group=postgres
+
+ExecStart=/usr/local/bin/patroni /etc/patroni/patroni.yml
+KillMode=process
+TimeoutSec=30
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

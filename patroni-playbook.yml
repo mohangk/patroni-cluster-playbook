@@ -1,0 +1,53 @@
+#sudo apt-get install python3-pip python3-psycopg2
+#sudo pip3 install patroni[etcd]
+#
+#cp patroni.service to /etc/systemd/system/patroni.service
+#
+#/etc/systemd/system/patroni.service.d/override.conf
+#
+#[Service]
+#Environment="PATRONI_SCOPE=pg-patroni"
+#Environment="PATRONI_NAME=pg-patroni-1"
+#Environment="PATRONI_ETCD_HOST=10.128.0.25:80"
+#Environment="PATRONI_RESTAPI_CONNECT_ADDRESS=10.128.0.26:8008"
+#Environment="PATRONI_POSTGRESQL_CONNECT_ADDRESS=10.128.0.26:5433"
+#
+#sudo systemctl enable patroni
+#sudo systemctl daemon-reload
+#
+#
+#mkdir /etc/patroni
+#cp pg-patroni-1.yml to /etc/patroni/patroni.yml
+#chown -R postgres:postgres /etc/patroni
+- hosts: pg12-img
+  become: yes
+
+  tasks:
+    - name: Add Patroni python dependencies
+      apt:
+        state: present
+        name: "{{ item }}"
+      with_items:
+        - python3-pip
+        - python3-psycopg2
+    - name: Install Patroni
+      pip:
+        name: patroni[etcd]==2.0.1
+    - name: Add Patroni systemd unit file
+      template:
+        src: template/patroni.service.j2
+        dest: /etc/systemd/system/patroni.service
+    - name: Add Patroni config directory
+      file:
+        state: directory
+        path: /etc/patroni
+        owner: postgres
+        group: postgres
+
+
+    - name: Add Patroni config file
+      template:
+        src: template/patroni.yml.j2
+        dest: /etc/patroni/patroni.yml
+        owner: postgres
+        group: postgres

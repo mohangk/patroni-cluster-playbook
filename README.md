@@ -1,6 +1,6 @@
 ## Introduction
 
-Scripts, Ansible playbooks and steps to setup a HA PG
+Scripts, Ansible playbooks and steps to setup a HA PG on Google Cloud
 
 
 ### Dependencies
@@ -83,37 +83,31 @@ gcloud compute forwarding-rules list --filter=name:patroni-etcd*
 cd ./scripts/pg
 ./create-pg-img-instance.sh
 ```
-2. Update the `inventory` databases section with the pg12-img ip
-3. Configure instances using Ansible playbook
+2. Update the Ansible `inventory` file and ensure that the newly created pg12-img IP or resolvable hostname is in the `[pg-img]` section
 ```bash
 cd ../../
+vim inventory
+```
+3. Run playbooks to install and configure PostgreSQL-12 and Patroni on the pg12-img
+```bash
 ansible-playbook bootstrap-python.yml
 ansible-playbook pg-playbook.yml
+ansible-playbook patroni-playbook.yml
 ```
-4. Manual changes on pg12-img before creating image snapshot. SSH into the instance
- a. Remove the mount /mnt/disks/pgdata is removed (the bootstrap scripts uses this to determin if needs to run)
- b. Remove the data disk entry from fstab (the bootstrap script should be the one that generates this)
-
-Folllwing is run on the pg12-img
+4. Create the pg12-img base image
 ```bash
-sudo systemctl stop postgresql
-sudo umount /mnt/disks/pgdata
-sudo rm -r /mnt/disks/pgdata
-sudo vim /etc/fstab
-```
-5. Create the pg12-img base image
-```bash
-./scripts/create-image.sh pg12-img
+./scripts/create-image.sh pg12-img pg12
 ```
 #### D. Create 3 Pg instances
 
-1. Edit `scripts/pg/create-pg-instance.sh` and set the PG_IMG variable to matche the base pg-image just created
+1. Edit `scripts/pg/create-pg-instance.sh` and set the PG_IMG variable to match the base pg-image just created
 
 2. Spin up 3 instances in 3 different zones
 ```bash
-./scripts/pg/create-pg-instance.sh pg-patroni-1 us-central1-a
-./scripts/pg/create-pg-instance.sh pg-patroni-2 us-central1-b
-./scripts/pg/create-pg-instance.sh pg-patroni-3 us-central1-c
+cd ./scripts/pg
+./create-pg-instance.sh pg-patroni-1 us-central1-a
+./create-pg-instance.sh pg-patroni-2 us-central1-b
+./create-pg-instance.sh pg-patroni-3 us-central1-c
 ```
 
 

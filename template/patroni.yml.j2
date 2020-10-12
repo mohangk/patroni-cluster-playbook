@@ -1,0 +1,67 @@
+# scope: pg-patroni 
+# name:  pg-patroni-1
+
+restapi:
+  listen: 0.0.0.0:8008
+  #  connect_address: 10.128.0.26:8008
+
+#etcd:
+#  host: 10.128.0.25:80
+
+bootstrap:
+  dcs:
+    ttl: 100
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: false
+      use_slots: true
+      parameters:
+        data_dir: /mnt/disks/pgdata/13/main
+        wal_level: replica
+        hot_standby: "on"
+        wal_keep_segments: 8
+        max_wal_senders: 5
+        max_replication_slots: 5
+        checkpoint_timeout: 30
+  initdb:
+    - encoding: UTF8
+    - data-checksums
+  pg_hba:
+    - local all postgres peer
+    - local all all peer
+    - host replication replicator 127.0.0.1/32 md5
+    - host replication replicator 10.128.0.0/24 md5 #TODO this needs to be configurable too ?
+    - host all all 0.0.0.0/0 md5
+  users:
+    admin:
+      password: password
+      options:
+        - createrole
+        - createdb
+
+postgresql:
+  listen: 0.0.0.0
+  #  connect_address: 10.128.0.26:5432
+  data_dir: /mnt/disks/pgdata/13/main
+  bin_dir: /usr/lib/postgresql/13/bin
+  pgpass: /tmp/pgpass
+  authentication:
+    replication:
+      username: replicator
+      password: password
+    superuser:
+      username: postgres
+      password: password
+  parameters:
+    unix_socket_directories: '/var/run/postgresql'
+    stats_temp_directory: '/var/run/postgresql/main.pg_stat_tmp'
+tags:
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
+  nosync: false
+log:
+  dir: /var/log/postgresql
+  level: INFO
