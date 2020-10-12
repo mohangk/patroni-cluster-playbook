@@ -30,6 +30,7 @@ gcloud compute backend-services create patroni-etcd-backend \
 	--port-name=etcd \
 	--protocol=HTTP \
 	--region=us-central1 \
+	--health-checks-region=us-central1 \
 	--health-checks=patroni-etcd-hc
 
 gcloud compute backend-services add-backend patroni-etcd-backend \
