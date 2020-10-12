@@ -1,26 +1,35 @@
-- hosts: databases
+- hosts: pg12-img
   become: yes
 
-  vars_files:
-    - vars/main.yml
-
-  pre_tasks:
-    - name: Add pg12 repo key
+  tasks:
+    - name: Add  PostgreSQL repo key
       apt_key:
         url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
         state: present
 
-    - name: Add pg12 repository
+    - name: Add PostgreSQL repository
       apt_repository: 
         repo: deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main
         state: present
         update_cache: true
 
-    - name: Create a symlink from /var/lib/postgresql to data_disk mountpoint
-      file:
-        src: "{{ data_disk_mountpoint }}"
-        dest: /var/lib/postgresql
-        state: link
+    - name: Ensure postgresql database-cluster manager package
+      package:
+        name: postgresql-common
+        update_cache: yes
 
-  roles:
-    - postgresql
+    - name: Disable initializing of a default postgresql cluster
+      replace:
+        path: /etc/postgresql-common/createcluster.conf
+        replace: create_main_cluster = false
+        regexp: ^#?create_main_cluster.*$
+
+    - name: Install postgresql packages
+      package:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - postgresql
+        - postgresql-client
+        - postgresql-contrib
