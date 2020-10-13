@@ -26,6 +26,11 @@ else
         sed -i "s/\$ETCD_ILB_IP/$ETCD_ILB_IP/g" /etc/systemd/system/patroni.service
         sed -i "s/\$HOST_IP/$HOST_IP/g" /etc/systemd/system/patroni.service
 
+        sed -i "s/\$CLUSTER_NAME/$CLUSTER_NAME/g" /etc/profile.d/patroni-envvars.sh
+        sed -i "s/\$HOSTNAME/$HOSTNAME/g" /etc/profile.d/patroni-envvars.sh
+        sed -i "s/\$ETCD_ILB_IP/$ETCD_ILB_IP/g" /etc/profile.d/patroni-envvars.sh
+        sed -i "s/\$HOST_IP/$HOST_IP/g" /etc/profile.d/patroni-envvars.sh
+
 	systemctl daemon-reload
 	systemctl enable patroni
 	systemctl start patroni
