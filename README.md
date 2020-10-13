@@ -103,12 +103,12 @@ ansible-playbook patroni-playbook.yml
 
 1. Edit `scripts/pg/create-pg-instance.sh` and set the PG_IMG variable to match the base pg-image just created
 
-2. Spin up 3 instances in 3 different zones
+2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>
 ```bash
 cd ./scripts/pg
-./create-pg-instance.sh pg-patroni-1 us-central1-a
-./create-pg-instance.sh pg-patroni-2 us-central1-b
-./create-pg-instance.sh pg-patroni-3 us-central1-c
+./create-pg-instance.sh pg-patroni-1 us-central1-a pg-patroni 10.128.0.25:80
+./create-pg-instance.sh pg-patroni-2 us-central1-b pg-patroni 10.128.0.25:80
+./create-pg-instance.sh pg-patroni-3 us-central1-c pg-patroni 10.128.0.25:80
 ```
 
 

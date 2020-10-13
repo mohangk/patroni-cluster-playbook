@@ -5,7 +5,7 @@ After=syslog.target network.target
 [Service]
 Environment="PATRONI_SCOPE=$CLUSTER_NAME"
 Environment="PATRONI_NAME=$HOSTNAME"
-Environment="PATRONI_ETCD_HOST=$ETCD_ILB_IP:80"
+Environment="PATRONI_ETCD_HOST=$ETCD_ILB_FQDN"
 Environment="PATRONI_RESTAPI_CONNECT_ADDRESS=$HOST_IP:8008"
 Environment="PATRONI_POSTGRESQL_CONNECT_ADDRESS=$HOST_IP:5432"
 Type=simple

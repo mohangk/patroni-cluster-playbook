@@ -1,8 +1,11 @@
 #!/bin/bash
 
-PG_IMAGE=pg13-202010121013
-ZONE=${2:-us-central1-a}
+PG_IMAGE=pg13-202010130534
 NAME=${1:-pg-primary}
+ZONE=${2:-us-central1-a}
+CLUSTER_NAME=$3
+ETCD_ILB_FQDN=$4
+
 gcloud compute  instances create $NAME \
 	--no-address \
 	--zone=$ZONE \
@@ -15,4 +18,5 @@ gcloud compute  instances create $NAME \
 	--create-disk=auto-delete=false,mode=rw,size=50,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=$NAME-data,device-name=data \
 	--tags=pg12, \
 	--scopes=https://www.googleapis.com/auth/compute.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/devstorage.read_write \
-	--metadata-from-file startup-script=bootstrap-pg.sh
+	--metadata-from-file startup-script=bootstrap-pg.sh \
+	--metadata=CLUSTER_NAME=$3,ETCD_ILB_FQDN=$4

@@ -19,16 +19,16 @@ else
 	#Initialize the Patroni config
         HOST_IP=$(curl -s http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip -H "Metadata-Flavor: Google")
         HOSTNAME=$(hostname)
-        ETCD_ILB_IP=10.128.0.25
-        CLUSTER_NAME='pg-patroni2'
+        ETCD_ILB_FQDN=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/ETCD_ILB_FQDN -H "Metadata-Flavor: Google")
+        CLUSTER_NAME=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/CLUSTER_NAME -H "Metadata-Flavor: Google")
         sed -i "s/\$CLUSTER_NAME/$CLUSTER_NAME/g" /etc/systemd/system/patroni.service
         sed -i "s/\$HOSTNAME/$HOSTNAME/g" /etc/systemd/system/patroni.service
-        sed -i "s/\$ETCD_ILB_IP/$ETCD_ILB_IP/g" /etc/systemd/system/patroni.service
+        sed -i "s/\$ETCD_ILB_FQDN/$ETCD_ILB_FQDN/g" /etc/systemd/system/patroni.service
         sed -i "s/\$HOST_IP/$HOST_IP/g" /etc/systemd/system/patroni.service
 
         sed -i "s/\$CLUSTER_NAME/$CLUSTER_NAME/g" /etc/profile.d/patroni-envvars.sh
         sed -i "s/\$HOSTNAME/$HOSTNAME/g" /etc/profile.d/patroni-envvars.sh
-        sed -i "s/\$ETCD_ILB_IP/$ETCD_ILB_IP/g" /etc/profile.d/patroni-envvars.sh
+        sed -i "s/\$ETCD_ILB_FQDN/$ETCD_ILB_FQDN/g" /etc/profile.d/patroni-envvars.sh
         sed -i "s/\$HOST_IP/$HOST_IP/g" /etc/profile.d/patroni-envvars.sh
 
 	systemctl daemon-reload
