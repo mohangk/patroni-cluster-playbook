@@ -19,4 +19,12 @@ gcloud compute  instances create $NAME \
 	--tags=pg12, \
 	--scopes=https://www.googleapis.com/auth/compute.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/devstorage.read_write \
 	--metadata-from-file startup-script=bootstrap-pg.sh \
-	--metadata=CLUSTER_NAME=$3,ETCD_ILB_FQDN=$4
+	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN
+
+# Create an unmanaged instance group for the pg instances
+# this is expected to fail if you are ading an instance to an existing zone
+IG_NAME="$CLUSTER_NAME-$ZONE-ig"
+gcloud compute instance-groups unmanaged create $IG_NAME --zone=$ZONE
+
+## Add instances to instance group for zone 
+gcloud compute instance-groups unmanaged add-instances $IG_NAME --instances=$NAME --zone=$ZONE

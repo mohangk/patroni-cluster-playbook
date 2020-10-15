@@ -99,11 +99,23 @@ ansible-playbook patroni-playbook.yml
 ```bash
 ./scripts/create-image.sh pg12-img pg12
 ```
-#### D. Create 3 Pg instances
+#### D. Create  Patroni-Pg ILB 
 
+1. Run `scripts/pg/create-pg-ilb-hc.sh` to create the health checks that will be used for the patroni pg cluster. This will only need to be run one no matter how many clusters you have as long as its in the same region. (TODO - currently we are setting up regional healthchecks, should we setup global instead?)
+```bash
+./scripts/pg/create-pg-ilb-hc.sh
+```
+
+2. Run `scripts/pg/create-pg-cluster-ilb.sh` to create the backend services and forwarding rule that will be use by this specific Patroni-Pg cluster. Takes the following arguments <cluster-name> <region>. This will only need to be run once per cluster. (TODO - currently we are setting up regional ILBs, should we setup global ILBs instead?)
+
+```bash
+./scripts/pg/create-pg-cluster-ilb.sh pg-patroni us-central1
+```
+
+#### E. Create Patroni-Pg cluster members
 1. Edit `scripts/pg/create-pg-instance.sh` and set the PG_IMG variable to match the base pg-image just created
 
-2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>
+2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>. This will spin up the pg instances, and add them to unmanaged instance groups that will stil behind the ILB created in "D"
 ```bash
 cd ./scripts/pg
 ./create-pg-instance.sh pg-patroni-1 us-central1-a pg-patroni 10.128.0.25:80
@@ -111,4 +123,7 @@ cd ./scripts/pg
 ./create-pg-instance.sh pg-patroni-3 us-central1-c pg-patroni 10.128.0.25:80
 ```
 
-
+3. Once up you can access and instance by ssh-ing to it and viewing the state of your cluster by running the following on the instances
+```bash
+patronictl -c /etc/patroni/patroni.yml list
+```
