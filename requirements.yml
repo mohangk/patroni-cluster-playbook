@@ -1,3 +1,4 @@
 ---
 roles:
   - name: andrewrothstein.etcd-cluster
+  - name: dylancwood.debian-pgbouncer
