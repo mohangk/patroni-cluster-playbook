@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PG_IMAGE=pg13-202010160725
+PG_IMAGE=${PG_IMAGE:-pg13-image}
 NAME=${1:-pg-primary}
 ZONE=${2:-us-central1-a}
 CLUSTER_NAME=$3
