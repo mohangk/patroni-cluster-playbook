@@ -8,6 +8,10 @@ CLUSTER_NAME=$1
 REGION=${2:-us-central1}
 ROLES="primary replica"
 
+if [[ $# -ne 2 ]]; then
+    echo "$0 [cluster name] [region]"
+    exit 2
+fi
 
 for ROLE in $ROLES; do
 	BE_SVC="$CLUSTER_NAME-$ROLE"
@@ -19,7 +23,7 @@ for ROLE in $ROLES; do
 		--protocol=TCP \
 		--region=$REGION \
 		--health-checks-region=$REGION \
-		--health-checks=patroni-pg-primary-hc
+		--health-checks=patroni-pg-$ROLE-hc
 
 	#2. Create forwarding rules for backend-service
 	gcloud compute forwarding-rules create $FWD_RULE\
