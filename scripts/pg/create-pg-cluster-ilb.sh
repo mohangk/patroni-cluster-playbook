@@ -29,7 +29,7 @@ for ROLE in $ROLES; do
 	gcloud compute forwarding-rules create $FWD_RULE\
 	  --load-balancing-scheme=INTERNAL \
 	  --network=default \
-	  --ports=5432 \
+	  --ports=5432,6432 \
 	  --region=$REGION \
 	  --backend-service=$BE_SVC \
 	  --backend-service-region=$REGION
