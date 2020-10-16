@@ -1,0 +1,15 @@
+- hosts: base-image
+  become: yes
+
+  tasks:
+    - name: Install nginx-light
+      package:
+        name: nginx-light
+        update_cache: yes
+
+    - name: nginx default site configuraton
+      template:
+        src: template/nginx-default.j2
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
