@@ -1,4 +1,4 @@
-- hosts: pg12-img
+- hosts: pg-img
   become: yes
 
   tasks:
