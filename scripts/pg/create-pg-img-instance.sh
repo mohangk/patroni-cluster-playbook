@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# Instance used to create a pg12 images
+# Instance used to create a pg images
 
 NAME=${1:-pg-img}
+REGION=${2:-us-central1}
+
 gcloud compute  instances create $NAME \
 	--no-address \
 	--zone=us-central1-a \
