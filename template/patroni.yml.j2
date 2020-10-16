@@ -1,12 +1,12 @@
-# scope: pg-patroni 
-# name:  pg-patroni-1
+scope: $CLUSTER_NAME
+name: $HOSTNAME
 
 restapi:
   listen: 0.0.0.0:8008
-  #  connect_address: 10.128.0.26:8008
+  connect_address: $HOST_IP:8008
 
-#etcd:
-#  host: 10.128.0.25:80
+etcd:
+  host: $ETCD_ILB_FQDN
 
 bootstrap:
   dcs:
@@ -17,6 +17,12 @@ bootstrap:
     postgresql:
       use_pg_rewind: false
       use_slots: true
+      pg_hba:
+        - local all postgres peer
+        - local all all peer
+        - host replication replicator 127.0.0.1/32 md5
+        - host replication replicator $REPLICATION_HOSTS_CIDR md5 #TODO this is limited to curently hosts in the same subnet - needs to support multiple subnets         
+        - host all all 0.0.0.0/0 md5
       parameters:
         data_dir: /mnt/disks/pgdata/13/main
         wal_level: replica
@@ -28,12 +34,6 @@ bootstrap:
   initdb:
     - encoding: UTF8
     - data-checksums
-  pg_hba:
-    - local all postgres peer
-    - local all all peer
-    - host replication replicator 127.0.0.1/32 md5
-    - host replication replicator 10.128.0.0/24 md5 #TODO this needs to be configurable too ?
-    - host all all 0.0.0.0/0 md5
   users:
     admin:
       password: password
@@ -43,7 +43,7 @@ bootstrap:
 
 postgresql:
   listen: 0.0.0.0
-  #  connect_address: 10.128.0.26:5432
+  connect_address: $HOST_IP:5432
   data_dir: /mnt/disks/pgdata/13/main
   bin_dir: /usr/lib/postgresql/13/bin
   pgpass: /tmp/pgpass

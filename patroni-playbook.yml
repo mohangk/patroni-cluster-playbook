@@ -19,11 +19,6 @@
         src: template/patroni.service.j2
         dest: /etc/systemd/system/patroni.service
 
-    - name: Add Patroni envvars so that Bash session has the required vars set
-      template:
-        src: template/patroni-envvars.sh.j2
-        dest: /etc/profile.d/patroni-envvars.sh
-
     - name: Add Patroni config directory
       file:
         state: directory
@@ -34,6 +29,6 @@
     - name: Add Patroni config file
       template:
         src: template/patroni.yml.j2
-        dest: /etc/patroni/patroni.yml
+        dest: /etc/patroni/patroni.yml.tmpl
         owner: postgres
         group: postgres

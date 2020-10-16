@@ -1,10 +1,14 @@
 #!/bin/bash
 
-PG_IMAGE=pg13-202010130534
+PG_IMAGE=pg13-202010160725
 NAME=${1:-pg-primary}
 ZONE=${2:-us-central1-a}
 CLUSTER_NAME=$3
 ETCD_ILB_FQDN=$4
+
+SUBNET=default  #TODO - hardcoded for now because still using auto-network
+REGION=$(gcloud compute zones describe $ZONE --format="value(region)")
+REPLICATION_HOSTS_CIDR=$(gcloud compute networks subnets describe $SUBNET --region=$REGION --format="value(ipCidrRange)")
 
 gcloud compute  instances create $NAME \
 	--no-address \
@@ -16,10 +20,10 @@ gcloud compute  instances create $NAME \
 	--boot-disk-device-name=$NAME-os \
 	--no-boot-disk-auto-delete \
 	--create-disk=auto-delete=false,mode=rw,size=50,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=$NAME-data,device-name=data \
-	--tags=pg12, \
+	--tags=pg-patroni, \
 	--scopes=https://www.googleapis.com/auth/compute.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/devstorage.read_write \
 	--metadata-from-file startup-script=bootstrap-pg.sh \
-	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN
+	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN,REPLICATION_HOSTS_CIDR=$REPLICATION_HOSTS_CIDR
 
 # Create an unmanaged instance group for the pg instances
 # this is expected to fail if you are ading an instance to an existing zone
