@@ -84,25 +84,27 @@ gcloud compute forwarding-rules list --filter=name:patroni-etcd*
 cd ./scripts/pg
 ./create-pg-img-instance.sh
 ```
-2. Update the Ansible `inventory` file and ensure that the newly created pg12-img IP or resolvable hostname is in the `[pg-img]` section
+2. Update the Ansible `inventory` file and ensure that the newly created pg-img IP or resolvable hostname is in the `[pg-img]` section
 ```bash
 cd ../../
 vim inventory
 ```
-3. Run playbooks to install and configure PostgreSQL-12 and Patroni on the pg12-img
+3. Run playbooks to install and configure PostgreSQL and Patroni on the `base-image`. Version of PostgreSQL can be customised by updated the `pgversion` variable in `pg-playbook.yml` file.
 ```bash
 ansible-playbook bootstrap-python.yml
 ansible-playbook pg-playbook.yml
 ansible-playbook patroni-playbook.yml
+ansible-playbook pgbouncer.yml
+ansible-playbook nginx.yml
 ```
-4. Create the pg12-img base image
+4. Create the pg-img base image
 ```bash
-./scripts/create-image.sh pg12-img pg12
+./scripts/create-image.sh pg-img pg12
 ```
 #### D. Create Patroni-Pg cluster members
 1. Set the PG_IMAGE variable to match the base pg-image name just created, or edit the default value in `create-pg-instance.sh` script.
 
-2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>. This will spin up the pg instances, and add them to unmanaged instance groups that will stil behind the ILB created in "D"
+2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>. This will spin up the pg instances, and add them to unmanaged instance groups that will stil behind the ILB created in "E"
 ```bash
 cd ./scripts/pg
 PG_IMAGE=pg12-202010100000 ./create-pg-instance.sh pg-patroni-1 us-central1-a pg-patroni 10.128.0.25:80
