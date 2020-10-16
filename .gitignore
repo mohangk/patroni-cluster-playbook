@@ -1,4 +1,4 @@
 *.retry
 *.swp
-roles/andrewrothstein*
+roles/
 *.log
