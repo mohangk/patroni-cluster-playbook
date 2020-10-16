@@ -6,6 +6,12 @@ ZONE=${2:-us-central1-a}
 CLUSTER_NAME=$3
 ETCD_ILB_FQDN=$4
 
+if [[ $# -ne 4 ]]; then
+    echo "$0 [instance name] [zone] [cluster name] [etcd endpoint ilb]"
+    exit 2
+fi
+
+
 SUBNET=default  #TODO - hardcoded for now because still using auto-network
 REGION=$(gcloud compute zones describe $ZONE --format="value(region)")
 REPLICATION_HOSTS_CIDR=$(gcloud compute networks subnets describe $SUBNET --region=$REGION --format="value(ipCidrRange)")
