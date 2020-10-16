@@ -100,14 +100,14 @@ ansible-playbook patroni-playbook.yml
 ./scripts/create-image.sh pg12-img pg12
 ```
 #### D. Create Patroni-Pg cluster members
-1. Edit `scripts/pg/create-pg-instance.sh` and set the PG_IMG variable to match the base pg-image just created
+1. Set the PG_IMAGE variable to match the base pg-image name just created, or edit the default value in `create-pg-instance.sh` script.
 
 2. Spin up 3 instances in 3 different zones using the `create-pg-instance.sh` script. Takes the following arguments <hostname> <region> <cluster-name> <etcd-ilb-fqdn>. This will spin up the pg instances, and add them to unmanaged instance groups that will stil behind the ILB created in "D"
 ```bash
 cd ./scripts/pg
-./create-pg-instance.sh pg-patroni-1 us-central1-a pg-patroni 10.128.0.25:80
-./create-pg-instance.sh pg-patroni-2 us-central1-b pg-patroni 10.128.0.25:80
-./create-pg-instance.sh pg-patroni-3 us-central1-c pg-patroni 10.128.0.25:80
+PG_IMAGE=pg12-202010100000 ./create-pg-instance.sh pg-patroni-1 us-central1-a pg-patroni 10.128.0.25:80
+PG_IMAGE=pg12-202010100000 ./create-pg-instance.sh pg-patroni-2 us-central1-b pg-patroni 10.128.0.25:80
+PG_IMAGE=pg12-202010100000 ./create-pg-instance.sh pg-patroni-3 us-central1-c pg-patroni 10.128.0.25:80
 ```
 
 3. Once up you can access and instance by ssh-ing to it and viewing the state of your cluster by running the following on the instances
