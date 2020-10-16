@@ -21,6 +21,7 @@ gcloud compute  instances create $NAME \
 	--no-boot-disk-auto-delete \
 	--create-disk=auto-delete=false,mode=rw,size=50,type=pd-ssd,name=$NAME-data,device-name=data \
 	--tags=pg-patroni, \
+	--labels=cluster=$CLUSTER_NAME \
 	--scopes=https://www.googleapis.com/auth/compute.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/devstorage.read_write \
 	--metadata-from-file startup-script=bootstrap-pg.sh \
 	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN,REPLICATION_HOSTS_CIDR=$REPLICATION_HOSTS_CIDR
