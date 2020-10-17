@@ -94,8 +94,8 @@ vim inventory
 ansible-playbook bootstrap-python.yml
 ansible-playbook pg-playbook.yml
 ansible-playbook patroni-playbook.yml
-ansible-playbook pgbouncer.yml
-ansible-playbook nginx.yml
+ansible-playbook pgbouncer-playbook.yml
+ansible-playbook nginx-playbook.yml
 ```
 4. Create the pg-img base image
 ```bash
