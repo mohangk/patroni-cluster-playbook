@@ -24,7 +24,7 @@ bootstrap:
         - host replication replicator $REPLICATION_HOSTS_CIDR md5 #TODO this is limited to curently hosts in the same subnet - needs to support multiple subnets         
         - host all all 0.0.0.0/0 md5
       parameters:
-        data_dir: /mnt/disks/pgdata/13/main
+        data_dir: /mnt/disks/pgdata/$PGVERSION/main
         wal_level: replica
         hot_standby: "on"
         wal_keep_segments: 8
@@ -44,8 +44,8 @@ bootstrap:
 postgresql:
   listen: 0.0.0.0
   connect_address: $HOST_IP:5432
-  data_dir: /mnt/disks/pgdata/13/main
-  bin_dir: /usr/lib/postgresql/13/bin
+  data_dir: /mnt/disks/pgdata/$PGVERSION/main
+  bin_dir: /usr/lib/postgresql/$PGVERSION/bin
   pgpass: /tmp/pgpass
   authentication:
     replication:

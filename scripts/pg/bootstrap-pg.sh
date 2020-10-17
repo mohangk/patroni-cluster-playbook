@@ -26,6 +26,7 @@ else
         ETCD_ILB_FQDN=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/ETCD_ILB_FQDN -H "Metadata-Flavor: Google")
         CLUSTER_NAME=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/CLUSTER_NAME -H "Metadata-Flavor: Google")
         REPLICATION_HOSTS_CIDR=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/REPLICATION_HOSTS_CIDR -H "Metadata-Flavor: Google")
+        PGVERSION=$(ls /usr/lib/postgresql/ | head -n1)
 	cp /etc/patroni/patroni.yml.tmpl /etc/patroni/patroni.yml
 
         sed -i "s/\$HOST_IP/$HOST_IP/g" /etc/patroni/patroni.yml
@@ -33,6 +34,7 @@ else
         sed -i "s/\$ETCD_ILB_FQDN/$ETCD_ILB_FQDN/g" /etc/patroni/patroni.yml
         sed -i "s/\$CLUSTER_NAME/$CLUSTER_NAME/g" /etc/patroni/patroni.yml
         sed -i "s|\$REPLICATION_HOSTS_CIDR|$REPLICATION_HOSTS_CIDR|g" /etc/patroni/patroni.yml #use a different delimeter as / is in the var
+        sed -i "s/\$PGVERSION/$PGVERSION/g" /etc/patroni/patroni.yml
 
 	systemctl daemon-reload
 	systemctl enable patroni
