@@ -120,7 +120,7 @@ patronictl -c /etc/patroni/patroni.yml list
 
 1. Run `scripts/pg/create-pg-ilb-hc.sh` to create the health checks that will be used for the patroni pg cluster. This will only need to be run one no matter how many clusters you have as long as its in the same region. (TODO - currently we are setting up regional healthchecks, should we setup global instead?)
 ```bash
-./scripts/pg/create-pg-ilb-hc.sh
+./scripts/pg/create-pg-ilb-hc.sh pg-patroni
 ```
 
 2. Run `scripts/pg/create-pg-cluster-ilb.sh` to create the backend services and forwarding rule that will be use by this specific Patroni-Pg cluster. Takes the following arguments <cluster-name> <region>. This will only need to be run once per cluster. (TODO - currently we are setting up regional ILBs, should we setup global ILBs instead?)
