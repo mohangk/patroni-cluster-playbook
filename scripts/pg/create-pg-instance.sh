@@ -1,10 +1,16 @@
 #!/bin/bash
 
-PG_IMAGE=pg13-202010160725
+PG_IMAGE=${PG_IMAGE:-pg13-image}
 NAME=${1:-pg-primary}
 ZONE=${2:-us-central1-a}
 CLUSTER_NAME=$3
 ETCD_ILB_FQDN=$4
+
+if [[ $# -ne 4 ]]; then
+    echo "$0 [instance name] [zone] [cluster name] [etcd endpoint ilb]"
+    exit 2
+fi
+
 
 SUBNET=default  #TODO - hardcoded for now because still using auto-network
 REGION=$(gcloud compute zones describe $ZONE --format="value(region)")
@@ -19,8 +25,9 @@ gcloud compute  instances create $NAME \
 	--boot-disk-type=pd-standard \
 	--boot-disk-device-name=$NAME-os \
 	--no-boot-disk-auto-delete \
-	--create-disk=auto-delete=false,mode=rw,size=50,type=projects/gcplabtest-286209/zones/us-central1-a/diskTypes/pd-ssd,name=$NAME-data,device-name=data \
+	--create-disk=auto-delete=false,mode=rw,size=50,type=pd-ssd,name=$NAME-data,device-name=data \
 	--tags=pg-patroni, \
+	--labels=cluster=$CLUSTER_NAME \
 	--scopes=https://www.googleapis.com/auth/compute.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/devstorage.read_write \
 	--metadata-from-file startup-script=bootstrap-pg.sh \
 	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN,REPLICATION_HOSTS_CIDR=$REPLICATION_HOSTS_CIDR

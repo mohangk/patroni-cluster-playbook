@@ -6,7 +6,7 @@ DISK_ID=/dev/disk/by-id/google-data
 
 #If $MNT_DIR already exists, we assume its already bootstrapped
 if [[ -d "$MNT_DIR" ]]; then
-        exit
+        echo "Disk mounted, continuing setup"
 else 
         sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard $DISK_ID; \
         sudo mkdir -p $MNT_DIR
@@ -15,10 +15,14 @@ else
 
         # Add fstab entry
         echo UUID=`sudo blkid -s UUID -o value $DISK_ID` $MNT_DIR ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
-	
+fi
+
+if (systemctl -q is-active patroni.service); then
+        echo "Patroni setup, exiting"
+else
 	#Initialize the Patroni config
-        HOST_IP=$(curl -s http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip -H "Metadata-Flavor: Google")
         HOSTNAME=$(hostname)
+        HOST_IP=$(curl -s http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip -H "Metadata-Flavor: Google")
         ETCD_ILB_FQDN=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/ETCD_ILB_FQDN -H "Metadata-Flavor: Google")
         CLUSTER_NAME=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/CLUSTER_NAME -H "Metadata-Flavor: Google")
         REPLICATION_HOSTS_CIDR=$(curl -s http://metadata/computeMetadata/v1/instance/attributes/REPLICATION_HOSTS_CIDR -H "Metadata-Flavor: Google")
@@ -33,5 +37,5 @@ else
 	systemctl daemon-reload
 	systemctl enable patroni
 	systemctl start patroni
-
 fi
+
