@@ -20,7 +20,7 @@ gcloud compute  instances create $NAME \
 	--no-address \
 	--zone=$ZONE \
 	--machine-type=n2-standard-4 \
-	--image=$PG_IMAGE \
+	--image-family=$PG_IMAGE \
 	--boot-disk-size=10GB \
 	--boot-disk-type=pd-standard \
 	--boot-disk-device-name=$NAME-os \

@@ -8,7 +8,7 @@ CLUSTER_NAME=$1
 REGION=${2:-us-central1}
 ROLES="primary replica"
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -lt 1 ]]; then
     echo "$0 [cluster name] [region]"
     exit 2
 fi
@@ -22,8 +22,8 @@ for ROLE in $ROLES; do
 		--load-balancing-scheme=INTERNAL \
 		--protocol=TCP \
 		--region=$REGION \
-		--health-checks-region=$REGION \
-		--health-checks=patroni-pg-$ROLE-hc
+		--global-health-checks \
+		--health-checks=$CLUSTER_NAME-$ROLE-hc
 
 	#2. Create forwarding rules for backend-service
 	gcloud compute forwarding-rules create $FWD_RULE\
@@ -46,4 +46,36 @@ for ROLE in $ROLES; do
 		--instance-group=$IG_NAME \
 		--instance-group-zone=$ZONE
 	done
+done
+
+#4. Create a failover instance group to fail closed, in case all instance in a pool fail
+FAILOVER=$CLUSTER_NAME-failover
+gcloud compute instance-templates create $FAILOVER-template \
+--machine-type=e2-small \
+--network=default --no-address \
+--metadata-from-file startup-script=failover-pg.sh \
+--no-service-account --no-scopes \
+--tags=$CLUSTER_NAME \
+--image-family=debian-10 \
+--image-project=debian-cloud \
+--boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=$CLUSTER_NAME-template \
+--labels=cluster=$CLUSTER_NAME
+
+gcloud compute instance-groups managed create $FAILOVER \
+--base-instance-name=$FAILOVER \
+--template=$FAILOVER-template \
+--size=1 \
+--region=$REGION \
+--health-check=$CLUSTER_NAME-primary-hc \
+--initial-delay 60 \
+--instance-redistribution-type=PROACTIVE
+
+#5. Attach failover group to ILB
+for ROLE in $ROLES; do
+	BE_SVC="$CLUSTER_NAME-$ROLE-backend"
+	gcloud compute backend-services add-backend $BE_SVC \
+		--region=$REGION \
+		--instance-group-region=$REGION \
+		--instance-group=$FAILOVER \
+		--failover
 done
