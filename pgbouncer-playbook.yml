@@ -1,0 +1,20 @@
+    - hosts: base-image
+      become: yes
+      vars:
+        pgbouncer_client_idle_timeout: 30
+        pgbouncer_database_aliases:
+          - name: mydb
+            host: 127.0.0.1
+            pool_size: 50
+            user: myuser
+        pgbouncer_auth_users:
+          - name: myuser
+            pass: md5dd9c52d41abcc8c5de5d717d9fd2efee
+        pgbouncer_install_pg_client: False
+        pgbouncer_auth_type: md5
+        pgbouncer_listen_addr: "*"
+        pgbouncer_pool_mode: transaction
+        pgbouncer_server_idle_timeout: 30
+      roles:
+         - { role: dylancwood.debian-pgbouncer}
+

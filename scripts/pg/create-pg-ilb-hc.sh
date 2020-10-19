@@ -1,4 +1,7 @@
 ## project wide setup
+
+REGION=${1:-us-central1}
+
 #Add firewall rule for the hc - allowing access to all targets to KISS
 gcloud compute firewall-rules create fw-allow-health-check \
     --network=default \
@@ -11,10 +14,11 @@ gcloud compute firewall-rules create fw-allow-health-check \
 gcloud compute health-checks create http patroni-pg-primary-hc \
 	--port=8008 \
 	--request-path=/master \
-	--region=us-central1
+	--region=$REGION
       
-#Add the replica hc
+#Add the replica hc, the lag value is customisable as required
+#The port is different as nginx needs to rewrite to query string
 gcloud compute health-checks create http patroni-pg-replica-hc \
-	--port=8008 \
-	--request-path=/replica \
-	--region=us-central1
+	--port=8009 \
+	--request-path=/replica/lag/100MB \
+	--region=$REGION

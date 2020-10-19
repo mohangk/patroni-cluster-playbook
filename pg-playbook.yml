@@ -1,5 +1,8 @@
-- hosts: pg12-img
+- hosts: base-image
   become: yes
+  
+  vars:
+    - pgversion: 12
 
   tasks:
     - name: Add  PostgreSQL repo key
@@ -30,6 +33,6 @@
         state: present
         update_cache: yes
       with_items:
-        - postgresql
-        - postgresql-client
-        - postgresql-contrib
+        - postgresql-{{ pgversion }}
+        - postgresql-client-{{ pgversion }}
+        - postgresql-contrib-{{ pgversion }}

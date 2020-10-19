@@ -1,9 +1,9 @@
-[pg-img]
-pg12-img
+[base-image]
+pg-img
 
 [databases]
 # Add IP for the following instances
-# pg12-img
+# pg-img
 
 [etcd]
 # Add IP for the following instances

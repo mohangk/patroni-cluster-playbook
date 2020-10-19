@@ -1,16 +1,19 @@
 [Unit]
 Description=Runners to orchestrate a high-availability PostgreSQL
 After=syslog.target network.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
 
 [Service]
 Type=simple
 User=postgres
 Group=postgres
+Restart=on-failure
+RestartSec=5s
 
 ExecStart=/usr/local/bin/patroni /etc/patroni/patroni.yml
 KillMode=process
 TimeoutSec=30
-Restart=no
 
 [Install]
 WantedBy=multi-user.target
