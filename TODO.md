@@ -35,6 +35,7 @@
   - os optimizations
   - network optimizations
   - pd-ssh / fs optimizations 
+  - figure out the right live migration config - https://cloud.google.com/compute/docs/instances/setting-instance-scheduling-options#terminate_and_optionally_restart
 
 2. Logging 
   - get patroni, etcd and postgresql logs streaming to cloudlogging
