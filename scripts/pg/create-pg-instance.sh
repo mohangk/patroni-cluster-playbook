@@ -1,6 +1,18 @@
 #!/bin/bash
 
-PG_IMAGE=${PG_IMAGE:-pg13-image}
+
+#if PG_IMAGE is set, use that otherwise use PG_IMG_FAMILY
+if [ -n "$PG_IMAGE" ]; then 
+	IMAGE=$PG_IMAGE
+	IMAGE_TYPE=""
+elif [ -n "$PG_IMG_FAMILY" ]; then
+	IMAGE=$PG_IMG_FAMILY
+	IMAGE_TYPE="-family"
+else
+    echo "Err: Env var PG_IMG or PG_IMG_FAMILY must be set"
+    exit 2
+fi
+
 NAME=${1:-pg-primary}
 ZONE=${2:-us-central1-a}
 CLUSTER_NAME=$3
@@ -20,7 +32,7 @@ gcloud compute  instances create $NAME \
 	--no-address \
 	--zone=$ZONE \
 	--machine-type=n2-standard-4 \
-	--image-family=$PG_IMAGE \
+	--image$IMAGE_TYPE=$IMAGE \
 	--boot-disk-size=10GB \
 	--boot-disk-type=pd-standard \
 	--boot-disk-device-name=$NAME-os \
