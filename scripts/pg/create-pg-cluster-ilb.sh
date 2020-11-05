@@ -2,7 +2,7 @@
 
 ##Cluster level setup
 
-# Dependency - create-pg-healthcheck.sh should of already been run as the health checks are required to setup the backend services 
+# Dependency - create-pg-ilb-hc.sh should of already been run as the health checks are required to setup the backend services 
 
 CLUSTER_NAME=$1
 REGION=${2:-us-central1}
@@ -14,8 +14,8 @@ if [[ $# -lt 1 ]]; then
 fi
 
 for ROLE in $ROLES; do
-	BE_SVC="$CLUSTER_NAME-$ROLE"
-	FWD_RULE="$CLUSTER_NAME-$ROLE"
+	BE_SVC="$CLUSTER_NAME-$ROLE-be"
+	FWD_RULE="$CLUSTER_NAME-$ROLE-fw"
 
 	# 1. Create backend-service
 	gcloud compute backend-services create $BE_SVC \
@@ -36,9 +36,9 @@ for ROLE in $ROLES; do
 done
 
 #3. List the cluster members based on the cluster label to determine which region and zone they are deployed in
-ZONES=$(gcloud compute instances list --filter="labels.cluster:$CLUSTER_NAME" --format="text" | grep zone: | cut -f9 -d\/ | xargs)
+ZONES=$(gcloud compute instances list --filter="labels.cluster:$CLUSTER_NAME" --format="value[terminator=' '](zone)")
 for ROLE in $ROLES; do
-	BE_SVC="$CLUSTER_NAME-$ROLE"
+	BE_SVC="$CLUSTER_NAME-$ROLE-be"
 	for ZONE in $ZONES; do
 		IG_NAME="$CLUSTER_NAME-$ZONE-ig"
 		gcloud compute backend-services add-backend $BE_SVC \
@@ -72,7 +72,7 @@ gcloud compute instance-groups managed create $FAILOVER \
 
 #5. Attach failover group to ILB
 for ROLE in $ROLES; do
-	BE_SVC="$CLUSTER_NAME-$ROLE-backend"
+	BE_SVC="$CLUSTER_NAME-$ROLE-be"
 	gcloud compute backend-services add-backend $BE_SVC \
 		--region=$REGION \
 		--instance-group-region=$REGION \
