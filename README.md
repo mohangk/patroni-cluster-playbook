@@ -128,3 +128,31 @@ patronictl -c /etc/patroni/patroni.yml list
 ```bash
 ./scripts/pg/create-pg-cluster-ilb.sh pg-patroni us-central1
 ```
+
+### Test your cluster
+
+1. You can access your pg cluster by connection your client to the IPs of the primary and replica ILBs. List the IPs by doing the following
+```bash
+gcloud compute forwarding-fules list --filter=name:pg-patroni*
+```
+
+2. Connect via psql as per usual
+
+
+### Deleting your cluster
+
+1. Delete the forwarding-rules, backends, instance-groups by running the following
+```bash
+./scripts/pg/delete-pg-cluster-ilb.sh pg-patroni us-central1
+```
+
+2. Remove your cluster from the DCS via patronictl. SSH into one of the instances and execute the following
+```bash
+patronictl -c /etc/patroni/patroni.yml pause
+patrinictl -c /etc/patroni/patroni.yml remove <cluster>
+```
+
+3. Remove the PG-patroni instances by using the helper script
+```bash
+./scripts/pg/delete-pg-instances.sh [iinstance name] [zone]
+```
