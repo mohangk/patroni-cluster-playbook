@@ -139,6 +139,26 @@ gcloud compute forwarding-fules list --filter=name:pg-patroni*
 
 2. Connect via psql as per usual
 
+#### Simple pgbench testing
+
+1. Init the database 
+```bash
+./simple_pgbensh.sh <primary IP> init
+```
+2.Run the read-write test
+
+```bash
+./simple_pgbench.sh <primary IP> run
+```
+
+3. Run the read only test
+
+```bash
+./simple_pgbench.sh <replica IP> rorun
+```
+
+
+
 
 ### Deleting your cluster
 
