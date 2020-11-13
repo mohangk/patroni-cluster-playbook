@@ -77,7 +77,7 @@ cluster is healthy
 gcloud compute forwarding-rules list --filter=name:patroni-etcd*
 ```
 
-#### C. Create Postgresql-12 image
+#### C. Create PostgreSQL image
 
 1. Create an instance to use for image setup
 ```bash
@@ -95,7 +95,6 @@ ansible-playbook bootstrap-python.yml
 ansible-playbook pg-playbook.yml
 ansible-playbook patroni-playbook.yml
 ansible-playbook pgbouncer-playbook.yml
-ansible-playbook nginx-playbook.yml
 ```
 4. Create the pg-img base image
 ```bash
@@ -123,13 +122,15 @@ patronictl -c /etc/patroni/patroni.yml list
 ./scripts/pg/create-pg-ilb-hc.sh pg-patroni
 ```
 
-2. Run `scripts/pg/create-pg-cluster-ilb.sh` to create the backend services and forwarding rule that will be use by this specific Patroni-Pg cluster. Takes the following arguments <cluster-name> <region>. This will only need to be run once per cluster. (TODO - currently we are setting up regional ILBs, should we setup global ILBs instead?)
+2. Run `scripts/pg/create-pg-cluster-ilb.sh` to create the backend services and forwarding rule that will be use by this specific Patroni-Pg cluster. Takes the following arguments <cluster-name> <region>. This will only need to be run once per cluster. 
 
 ```bash
 ./scripts/pg/create-pg-cluster-ilb.sh pg-patroni us-central1
 ```
 
 ### Test your cluster
+
+#### Identifying your cluster primary and replica endpoints
 
 1. You can access your pg cluster by connection your client to the IPs of the primary and replica ILBs. List the IPs by doing the following
 ```bash

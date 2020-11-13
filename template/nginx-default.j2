@@ -1,9 +1,0 @@
-server {
-        listen 8009 default_server;
-        access_log  off;
-
-        location / {
-                rewrite ^/replica/lag/(.*)$ /replica?lag=$1 break;
-                proxy_pass http://localhost:8008;
-        }
-}

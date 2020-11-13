@@ -24,10 +24,9 @@ gcloud compute health-checks create http $CLUSTER-primary-hc \
 	--global
       
 #Add the replica hc, the lag value is customisable as required
-#The port is different as nginx needs to rewrite to query string
 gcloud compute health-checks create http $CLUSTER-replica-hc \
-	--port=8009 \
-	--request-path=/replica/lag/100MB \
+	--port=8008 \
+	--request-path=/replica?lag=100MB \
 	--check-interval="2s" \
 	--timeout="2s" \
 	--global
