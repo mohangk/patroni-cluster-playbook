@@ -57,6 +57,9 @@ postgresql:
   parameters:
     unix_socket_directories: '/var/run/postgresql'
     stats_temp_directory: '/var/run/postgresql/main.pg_stat_tmp'
+    log_destination: syslog
+    log_min_messages: info
+    log_checkpoints: true
 tags:
   nofailover: false
   noloadbalance: false
