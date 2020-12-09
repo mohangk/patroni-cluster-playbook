@@ -2,3 +2,4 @@
 *.swp
 roles/
 *.log
+inventory.gcp.yml

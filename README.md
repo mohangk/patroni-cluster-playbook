@@ -13,7 +13,7 @@ Scripts, Ansible playbooks and steps to setup a HA PG on Google Cloud
 ```bash
 sudo apt-get update
 sudo apt-get install pip3-python git
-pip3 install ansible
+pip3 install ansible requests google-auth
 ```
 
 4. Add  ~/.local/bin to PATH 
