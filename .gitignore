@@ -3,3 +3,8 @@
 roles/
 *.log
 inventory.gcp.yml
+*.tfstate*
+.terraform
+.terraform.lock*
+*.tfvars
+
