@@ -45,7 +45,7 @@ gcloud compute  instances create $NAME \
 	--metadata-from-file startup-script=bootstrap-pg.sh \
 	--metadata=CLUSTER_NAME=$CLUSTER_NAME,ETCD_ILB_FQDN=$ETCD_ILB_FQDN,REPLICATION_HOSTS_CIDR=$REPLICATION_HOSTS_CIDR
 
-# Create an unmanaged instance group for the pg instances
+# Create a zonal unmanaged instance group for the pg instances
 # this is expected to fail if you are ading an instance to an existing zone
 IG_NAME="$CLUSTER_NAME-$ZONE-ig"
 gcloud compute instance-groups unmanaged create $IG_NAME --zone=$ZONE

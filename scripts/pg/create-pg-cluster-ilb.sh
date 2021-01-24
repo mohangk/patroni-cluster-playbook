@@ -3,7 +3,14 @@
 ##Cluster level setup
 
 # Dependency - create-pg-ilb-hc.sh should of already been run as the health checks are required to setup the backend services 
-
+#
+# Structure
+# =========
+#
+# pg-instance --> zonal unmanaged instance group --> primary backend service --> primary forwarding rule
+#                                                --> replica backend service --> replica forwarding rule
+#
+#
 CLUSTER_NAME=$1
 REGION=${2:-us-central1}
 ROLES="primary replica"
@@ -35,7 +42,7 @@ for ROLE in $ROLES; do
 	  --backend-service-region=$REGION
 done
 
-#3. List the cluster members based on the cluster label to determine which region and zone they are deployed in
+#3. List the cluster members based on the cluster label to determine which region and zone they are deployed in and add the instance group to the backend service
 ZONES=$(gcloud compute instances list --filter="labels.cluster:$CLUSTER_NAME" --format="value[terminator=' '](zone)")
 for ROLE in $ROLES; do
 	BE_SVC="$CLUSTER_NAME-$ROLE-be"
