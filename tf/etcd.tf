@@ -8,7 +8,7 @@
 # - firewalls
 # - backends service hc
 #
-//https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager
+
 resource "google_compute_instance" "etcd-instances" {
   for_each = toset(var.zones)
   name         = "etcd-${each.key}"
@@ -55,10 +55,10 @@ locals {
     unhealthy_threshold = 5
     response            = ""
     proxy_header        = "NONE"
-    port                = 80
+    port                = 2379
     port_name           = "health-check-port"
     request             = ""
-    request_path        = "/"
+    request_path        = "/health"
     host                = "1.2.3.4"
   }
 }
@@ -71,7 +71,7 @@ module "etcd-ilb" {
   network      = google_compute_network.vpc.name
   subnetwork   = google_compute_subnetwork.subnet.name
   name         = "etcd-ilb"
-  ports        = ["80"]
+  ports        = ["2379"]
   health_check = local.health_check
   source_ip_ranges  = ["0.0.0.0/0"]
   source_tags = ["client"]
