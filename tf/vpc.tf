@@ -29,14 +29,14 @@ resource "google_compute_router_nat" "nat" {
 }
 
 #Firewall rules
-resource "google_compute_firewall" "allowed-ports-internal" {
-  name    = "allowed-ports-internal"
+resource "google_compute_firewall" "allowed-ports-internal2" {
+  name    = "allowed-ports-internal2"
   description = "Accepts ssh and http from local" 
   network = google_compute_network.vpc.name
 
   allow {
     protocol = "tcp"
-    ports    = [80,22,2379,2380]
+    ports    = [22,2379,2380,5432]
   }
 
   source_ranges           = [google_compute_subnetwork.subnet.ip_cidr_range]
