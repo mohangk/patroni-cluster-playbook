@@ -4,12 +4,12 @@
 # $2 - base name of the image
 
 if [[ $# -ne 2 ]]; then
-    echo "$0 [instance] [image family]"
+    echo "$0 [instance] [image base name]"
     exit 2
 fi
 
 printf -v date '%(%Y%m%d%H%M)T\n' -1
-ZONE=$(gcloud compute instances list --filter="labels.pgimage:true" --format="text" | grep zone: | cut -f9 -d\/ | xargs)
+ZONE=$(gcloud compute instances list --filter="name:$1" --format="text" | grep zone: | cut -f9 -d\/ | xargs)
 if [ -z $ZONE ]; then
     echo "couldn't fine image"
 else
