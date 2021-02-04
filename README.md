@@ -23,6 +23,8 @@ echo "export PATH=$PATH:~/.local/bin" >> ~/.bashrc
 source ~/.bashrc
 ```
 
+5. Install terraform
+
 5. Clone project to instances
 
 ```bash
