@@ -1,6 +1,7 @@
 resource "google_compute_instance" "pg-img-vm" {
-  name         = "pg-img2"
+  name         = "pg-img"
   machine_type = "n2-standard-2"
+  zone         =  var.zones[0] #any one of the zone is fine
 
   tags = ["pg-img-vm", "image"]
   labels = {
