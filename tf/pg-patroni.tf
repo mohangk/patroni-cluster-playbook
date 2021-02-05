@@ -1,6 +1,3 @@
-#
-#
-#
 # the ilb modules handles creating
 # - backend service, 
 # - fwd rule
@@ -30,7 +27,7 @@ resource "google_compute_disk" "pg_disk" {
 resource "google_compute_instance" "pg" {
   for_each = toset(var.zones)
   name         = "pg-${index(var.zones, each.value) + 1}"
-  machine_type = "n2-standard-2" #TODO: Move to var
+  machine_type = var.db_machine_type
   zone = each.key
 
   tags = ["pg-patroni"]
@@ -48,7 +45,7 @@ resource "google_compute_instance" "pg" {
 
   boot_disk {
     initialize_params {
-      image = "pg13-202102031140" #TODO: Move to var
+      image = var.pg_image
       size = "10"
       type = "pd-standard"
     }
