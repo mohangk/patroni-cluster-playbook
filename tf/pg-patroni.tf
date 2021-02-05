@@ -1,6 +1,5 @@
 #
 #
-# instance -> zonal unmanaged ig -> backend service + hc -> fwd rule
 #
 # the ilb modules handles creating
 # - backend service, 
@@ -8,6 +7,13 @@
 # - firewalls
 # - backends service hc
 #
+# For the purpose of the pg-patroni cluster we will have 2 forwarding 
+# rules (LBs) one for the primary endpoint, the other for the read 
+# replica endpoints
+#
+#  
+# instance -> zonal unmanaged ig -> primary backend service + hc -> primary fwd rule
+#                                   replica backend service + hc -> replica fwd rule
 #
 
 locals {
@@ -62,50 +68,83 @@ resource "google_compute_instance" "pg" {
   }
 }
 
-#resource "google_compute_instance_group" "etcd" {
-#  name        = "etcd-${each.key}-ig"
-#  description = "Unamanged instance groups that contain the etcd instances"
-#  for_each = toset(var.zones)
-#
-#  instances = [google_compute_instance.etcd-instances[each.key].id]
-#  
-#
-#  zone = each.key
-#}
-#
-#locals {
-#  health_check = {
-#    type                = "http"
-#    check_interval_sec  = 1
-#    healthy_threshold   = 4
-#    timeout_sec         = 1
-#    unhealthy_threshold = 5
-#    response            = ""
-#    proxy_header        = "NONE"
-#    port                = 2379
-#    port_name           = "health-check-port"
-#    request             = ""
-#    request_path        = "/health"
-#    host                = "1.2.3.4"
-#  }
-#}
-#
-#
-#module "etcd-ilb" {
-#  source       = "GoogleCloudPlatform/lb-internal/google"
-#  version      = "~> 2.0"
-#  region       = var.region
-#  network      = google_compute_network.vpc.name
-#  subnetwork   = google_compute_subnetwork.subnet.name
-#  name         = "etcd-ilb"
-#  ports        = ["2379"]
-#  health_check = local.health_check
-#  source_ip_ranges  = ["0.0.0.0/0"]
-#  source_tags = ["client"]
-#  target_tags  = ["etcd"]
-#  backends     = [
-#    { group = google_compute_instance_group.etcd["us-central1-a"].self_link, description = "zone a ig" },
-#    { group = google_compute_instance_group.etcd["us-central1-b"].self_link, description = "zone b ig" },
-#    { group = google_compute_instance_group.etcd["us-central1-c"].self_link, description = "zone c ig" },
-#  ]
-#}
+resource "google_compute_instance_group" "pg" {
+  name        = "pg-${each.key}-ig"
+  description = "Unamanged instance groups that contain the pg instances for a zone"
+  for_each = toset(var.zones)
+
+  instances = [google_compute_instance.pg[each.key].id]
+
+  zone = each.key
+}
+
+locals {
+  primary_hc = {
+    type                = "http"
+    check_interval_sec  = 2
+    healthy_threshold   = 2
+    timeout_sec         = 2
+    unhealthy_threshold = 2
+    host                = ""
+    response            = ""
+    proxy_header        = "NONE"
+    port                = 8008
+    port_name           = ""
+    request             = ""
+    request_path        = "/primary"
+  }
+
+  replica_hc = {
+    type                = "http"
+    check_interval_sec  = 2
+    healthy_threshold   = 2
+    timeout_sec         = 2
+    unhealthy_threshold = 2
+    host                = ""
+    response            = ""
+    proxy_header        = "NONE"
+    port                = 8008
+    port_name           = ""
+    request             = ""
+    request_path        = "/replica?lag=100MB"
+  }
+}
+
+
+module "pg-primary-ilb" {
+  source       = "GoogleCloudPlatform/lb-internal/google"
+  version      = "~> 2.0"
+  region       = var.region
+  network      = google_compute_network.vpc.name
+  subnetwork   = google_compute_subnetwork.subnet.name
+  name         = "pg-primary-ilb"
+  ports        = ["5432"]
+  health_check = local.primary_hc
+  source_ip_ranges  = ["0.0.0.0/0"]
+  source_tags = ["client"]
+  target_tags  = ["pg-patroni"]
+  backends     = [
+    { group = google_compute_instance_group.pg["us-central1-a"].self_link, description = "zone a ig" },
+    { group = google_compute_instance_group.pg["us-central1-b"].self_link, description = "zone b ig" },
+    { group = google_compute_instance_group.pg["us-central1-c"].self_link, description = "zone c ig" },
+  ]
+}
+
+module "pg-replica-ilb" {
+  source       = "GoogleCloudPlatform/lb-internal/google"
+  version      = "~> 2.0"
+  region       = var.region
+  network      = google_compute_network.vpc.name
+  subnetwork   = google_compute_subnetwork.subnet.name
+  name         = "pg-replica-ilb"
+  ports        = ["5432"]
+  health_check = local.replica_hc
+  source_ip_ranges  = ["0.0.0.0/0"]
+  source_tags = ["client"]
+  target_tags  = ["pg-patroni"]
+  backends     = [
+    { group = google_compute_instance_group.pg["us-central1-a"].self_link, description = "zone a ig" },
+    { group = google_compute_instance_group.pg["us-central1-b"].self_link, description = "zone b ig" },
+    { group = google_compute_instance_group.pg["us-central1-c"].self_link, description = "zone c ig" },
+  ]
+}
